@@ -112,16 +112,16 @@ yarn build
         - setEmail(email: string); void; (установить почту)
         - setAddress(address: string): void; (установить адрес)
         - setTotalPrice(price: number | null): void (установить цену)
-        - submit(): Promise<IOrderSuccess>; (отправляет заказ)
+        - submit(): Promise< IOrderSuccess >; (отправляет заказ)
         - clear(): void; (очистить заказ)
 
 - WebStoreApi. Класс для работы с API сервера, отправляет заказ, получает каталог товаров или товар по идентификатору. Наследуется от класса Api.
     - Поля:
         - baseUrl: string; (общий URL запросов)
     - Методы:
-        - getItemList(): Promise<IItemList>; (отправляет запрос на сервер для получение каталога товаров)
-	    - getItem(id: string): Promise<IItem>; (отправляет запрос на сервер для получения товара по идентификатору)
-	    - makeOrder(order: IOrder): Promise<IOrderSuccess>; (отправляет запрос на сервер для создание заказа)
+        - getItemList(): Promise< IItemList >; (отправляет запрос на сервер для получение каталога товаров)
+	    - getItem(id: string): Promise< IItem >; (отправляет запрос на сервер для получения товара по идентификатору)
+	    - makeOrder(order: IOrder): Promise< IOrderSuccess >; (отправляет запрос на сервер для создание заказа)
 
 #### Отображение (View)
 - View. Абстрактный класс для всех компонентов отображения, наследуются всеми классами отображения приложения. Предоставляет базовые методы:  установить текст, изображение; показать/скрыть/деактивировать HTML-элемент, переключить класс, отрисовать элемент на странице. 
@@ -132,7 +132,7 @@ yarn build
         - setHidden(element: HTMLElement): void (скрыть элемент)
         - setVisible(element: HTMLElement); void (показать элемент)
         - setImage(element: HTMLImageElement, src: string, alt?: string); void (установить картинку)
-        - render(data?: Partial<T>): HTMLElement (отрисовать элемент)
+        - render(data?: Partial< T >): HTMLElement (отрисовать элемент)
 
 - MainPageView. Класс для отрисовки главной страницы приложения (каталога товаров, счетчика в корзине и кнопки открытия корзины).
     - Поля:
@@ -192,7 +192,7 @@ yarn build
     - Методы:
         - setButtonActive(active: boolean): void; (управляет активацией/деактивацией кнопки отправки формы)
         - setError(error: string): void; (отображает ошибки валидации)
-        - render(data?: Partial<T>): HTMLElement (отрисовать форму)
+        - render(data?: Partial< T >): HTMLElement (отрисовать форму)
 
 - OrderFormView. Родительский класс - FormView. Отрисовывает первую форма ввода при формировании заказа (выбор способа оплаты и ввод адреса).
     - Поля:
