@@ -15,6 +15,7 @@ import { MainPageModel } from './components/model/MainPageModel';
 import { ModalView } from './components/view/ModalView';
 import { BasketView } from './components/view/BasketView';
 import { OrderModel } from './components/model/OrderModel';
+import { OrderViewAddress } from './components/view/OrderView';
 
 const cardTemplate = ensureElement<HTMLTemplateElement>('#card-catalog');
 const cardPreviewTemplate = ensureElement<HTMLTemplateElement>('#card-preview');
@@ -33,6 +34,10 @@ const mainPage = new MainPageModel(new BasketModel(), new OrderModel(), events);
 const mainPageView = new MainPageView(document.body, events);
 const modalView = new ModalView(modalContainer, events);
 const basketView = new BasketView(cloneTemplate(basketTemplate), events);
+const orderViewAddress = new OrderViewAddress(
+	cloneTemplate(orderTemplate),
+	events
+);
 
 api
 	.getItemList()
@@ -94,7 +99,11 @@ events.on(AppEvents.BASKET_OPEN, () => {
 	modalView.render({ contentView: basketView.render() });
 });
 
-events.on(AppEvents.ORDER_DELIVERY, () => {});
+events.on(AppEvents.ORDER_START, () => {
+	modalView.render({
+		contentView: orderViewAddress.render({ valid: false, errors: [] }),
+	});
+});
 
 events.on(AppEvents.MODAL_OPEN, () => {
 	mainPageView.render({ lock: true });

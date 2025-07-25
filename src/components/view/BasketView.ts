@@ -22,9 +22,9 @@ export class BasketView extends View<IBasket> {
 			this.container
 		);
 
-		this._buyButton.addEventListener('click', () =>
-			this.events.emit(AppEvents.ORDER_DELIVERY)
-		);
+		this._buyButton.addEventListener('click', () => {
+			this.events.emit(AppEvents.ORDER_START);
+		});
 		this.setDisabled(this._buyButton, true);
 	}
 

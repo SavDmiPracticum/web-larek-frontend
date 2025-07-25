@@ -3,13 +3,16 @@ import { IEvents } from '../base/events';
 import { BasketModel } from './BasketModel';
 import { OrderModel } from './OrderModel';
 
-
 export class MainPageModel {
 	protected _catalog: IItem[] = [];
 	protected _basket: BasketModel;
-	protected _order: OrderModel;
+	protected _order: IOrder = { items: [] };
 
-	constructor(basket: BasketModel, order:OrderModel, protected events: IEvents) {
+	constructor(
+		basket: BasketModel,
+		order: OrderModel,
+		protected events: IEvents
+	) {
 		this._basket = basket;
 		this._order = order;
 	}
@@ -29,9 +32,5 @@ export class MainPageModel {
 
 	get basket(): BasketModel {
 		return this._basket;
-	}
-
-	get order(): OrderModel {
-		return this._order;
 	}
 }

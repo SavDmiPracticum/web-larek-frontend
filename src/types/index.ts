@@ -28,11 +28,11 @@ export interface IBasket {
 }
 
 export interface IOrder {
-	payment: PayMethod;
-	email: string;
-	phone: string;
-	address: string;
-	totalPrice: number;
+	payment?: PayMethod;
+	email?: string;
+	phone?: string;
+	address?: string;
+	totalPrice?: number;
 	items: string[];
 }
 
@@ -61,8 +61,8 @@ export enum AppEvents {
 	BASKET_OPEN = 'basket:open',
 	BASKET_UPDATE = 'basket:update',
 
-	ORDER_DELIVERY = 'order:delivery',
-	ORDER_CONTACT = 'order:contact',
+	ORDER_START = 'order:start',
+	CONTACTS_SUBMIT = 'contacts:submit',
 	ORDER_SUBMIT = 'order:submit',
 	ORDER_ERROR = 'order:error',
 
