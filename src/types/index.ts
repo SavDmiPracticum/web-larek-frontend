@@ -1,4 +1,3 @@
-
 export type PayMethod = 'online' | 'offline';
 export type Category =
 	| 'софт-скил'
@@ -14,10 +13,12 @@ export interface IItem {
 	title: string;
 	category: Category;
 	price: number | null;
+	index?: number;
+	inBasket?: boolean;
 }
 
 export interface IItemList {
-    total: number;
+	total: number;
 	items: IItem[];
 }
 
@@ -59,11 +60,10 @@ export enum AppEvents {
 
 	BASKET_OPEN = 'basket:open',
 	BASKET_UPDATE = 'basket:update',
-	BASKET_CLOSE = 'basket:close',
 
-	ORDER_STEP = 'order:step',
+	ORDER_DELIVERY = 'order:delivery',
+	ORDER_CONTACT = 'order:contact',
 	ORDER_SUBMIT = 'order:submit',
-	ORDER_SUCCESS = 'order:success',
 	ORDER_ERROR = 'order:error',
 
 	MODAL_OPEN = 'modal:open',
