@@ -27,12 +27,15 @@ export interface IBasket {
 	totalPrice: number;
 }
 
-export interface IOrder {
-	payment?: PayMethod;
+export interface IOrderForm {
+	payment?: string;
 	email?: string;
 	phone?: string;
 	address?: string;
-	totalPrice?: number;
+}
+
+export interface IOrder extends IOrderForm {
+	total: number;
 	items: string[];
 }
 
@@ -40,6 +43,8 @@ export interface IOrderSuccess {
 	id: string;
 	total: number;
 }
+
+export type FormErrors = Partial<Record<keyof IOrderForm, string>>;
 
 export interface IApiError {
 	error: string;
@@ -61,10 +66,16 @@ export enum AppEvents {
 	BASKET_OPEN = 'basket:open',
 	BASKET_UPDATE = 'basket:update',
 
+	FORM_ERRORS_CHANGE = 'formErrors:change',
+
 	ORDER_START = 'order:start',
+	CONTACTS_READY = 'contacts:ready',
 	CONTACTS_SUBMIT = 'contacts:submit',
 	ORDER_SUBMIT = 'order:submit',
+	ORDER_READY = 'order:ready',
 	ORDER_ERROR = 'order:error',
+
+	SUCCESS_CLOSE = 'success:close',
 
 	MODAL_OPEN = 'modal:open',
 	MODAL_CLOSE = 'modal:close',

@@ -17,6 +17,10 @@ export class BasketModel implements IBasket {
 		this._totalPrice = value;
 	}
 
+	get totalPrice(): number {
+		return this._totalPrice;
+	}
+
 	add(item: IItem): void {
 		this._items.push(item);
 		this._totalPrice += item.price ?? 0;
@@ -38,5 +42,10 @@ export class BasketModel implements IBasket {
 
 	getItemsCount(): number {
 		return this._items.length;
+	}
+
+	clear(): void {
+		this._items = [];
+		this._totalPrice = 0;
 	}
 }

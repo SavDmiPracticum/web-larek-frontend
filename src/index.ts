@@ -7,15 +7,24 @@ import {
 	ItemPreviewView,
 } from './components/view/ItemView';
 import './scss/styles.scss';
-import { AppEvents, IItem, IItemList } from './types';
+import {
+	AppEvents,
+	IItem,
+	IItemList,
+	IOrderForm,
+	IOrderSuccess,
+} from './types';
 import { settings, API_URL } from './utils/constants';
 import { cloneTemplate, ensureElement } from './utils/utils';
 import { BasketModel } from './components/model/BasketModel';
 import { MainPageModel } from './components/model/MainPageModel';
 import { ModalView } from './components/view/ModalView';
 import { BasketView } from './components/view/BasketView';
-import { OrderModel } from './components/model/OrderModel';
-import { OrderViewAddress } from './components/view/OrderView';
+import {
+	OrderViewAddress,
+	OrderViewContacts,
+} from './components/view/OrderView';
+import { SuccessView } from './components/view/SuccessView';
 
 const cardTemplate = ensureElement<HTMLTemplateElement>('#card-catalog');
 const cardPreviewTemplate = ensureElement<HTMLTemplateElement>('#card-preview');
@@ -29,7 +38,7 @@ const successTemplate = ensureElement<HTMLTemplateElement>('#success');
 const api = new WebStoreApi(API_URL);
 const events = new EventEmitter();
 
-const mainPage = new MainPageModel(new BasketModel(), new OrderModel(), events);
+const mainPage = new MainPageModel(new BasketModel(), events);
 
 const mainPageView = new MainPageView(document.body, events);
 const modalView = new ModalView(modalContainer, events);
@@ -38,6 +47,11 @@ const orderViewAddress = new OrderViewAddress(
 	cloneTemplate(orderTemplate),
 	events
 );
+const orderViewContacts = new OrderViewContacts(
+	cloneTemplate(contactTemplate),
+	events
+);
+const successView = new SuccessView(cloneTemplate(successTemplate), events);
 
 api
 	.getItemList()
@@ -103,6 +117,79 @@ events.on(AppEvents.ORDER_START, () => {
 	modalView.render({
 		contentView: orderViewAddress.render({ valid: false, errors: [] }),
 	});
+});
+
+events.on(
+	'order.address:change',
+	(data: { field: keyof IOrderForm; value: string }) => {
+		mainPage.setOrderField(data.field, data.value);
+	}
+);
+
+events.on(
+	'order.payment:change',
+	(data: { field: keyof IOrderForm; value: string }) => {
+		mainPage.setOrderField(data.field, data.value);
+	}
+);
+
+events.on(
+	'contacts.phone:change',
+	(data: { field: keyof IOrderForm; value: string }) => {
+		mainPage.setContactsField(data.field, data.value);
+	}
+);
+
+events.on(
+	'contacts.email:change',
+	(data: { field: keyof IOrderForm; value: string }) => {
+		mainPage.setContactsField(data.field, data.value);
+	}
+);
+
+events.on(AppEvents.FORM_ERRORS_CHANGE, (errors: Partial<IOrderForm>) => {
+	const { email, phone, address } = errors;
+	orderViewAddress.valid = !address;
+	orderViewAddress.errors = Object.values({ address })
+		.filter((i) => !!i)
+		.join('; ');
+
+	orderViewContacts.valid = !email && !phone;
+	orderViewContacts.errors = Object.values({ phone, email })
+		.filter((i) => !!i)
+		.join('; ');
+});
+
+events.on(AppEvents.ORDER_READY, () => {
+	orderViewAddress.valid = true;
+});
+
+events.on(AppEvents.ORDER_SUBMIT, () => {
+	modalView.render({
+		contentView: orderViewContacts.render({ valid: false, errors: [] }),
+	});
+});
+
+events.on(AppEvents.CONTACTS_READY, () => {
+	orderViewContacts.valid = true;
+});
+
+events.on(AppEvents.CONTACTS_SUBMIT, () => {
+	mainPage.setOrderPrice(mainPage.basket.totalPrice);
+	mainPage.setOrderItems(mainPage.basket.getItemsBasket());
+	api.makeOrder(mainPage.order).then((data: IOrderSuccess) => {
+		successView.total = data.total;
+		modalView.render({
+			contentView: successView.render(),
+		});
+	});
+});
+
+events.on(AppEvents.SUCCESS_CLOSE, () => {
+	modalView.close();
+	orderViewAddress.reset();
+	orderViewContacts.reset();
+	mainPage.resetAll();
 });
 
 events.on(AppEvents.MODAL_OPEN, () => {
