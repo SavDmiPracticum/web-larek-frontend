@@ -1,4 +1,3 @@
-import { AppEvents, IItem } from '../../types';
 import { ensureElement } from '../../utils/utils';
 import { IEvents } from '../base/events';
 import { View } from '../base/View';
@@ -22,8 +21,8 @@ export class MainPageView extends View<IMainPage> {
 		this._counter = ensureElement<HTMLElement>('.header__basket-counter');
 		this._pageLock = ensureElement<HTMLElement>('.page__wrapper');
 		this._basket.addEventListener('click', () => {
-			this.events.emit(AppEvents.BASKET_UPDATE);
-			this.events.emit(AppEvents.BASKET_OPEN);
+			this.events.emit('basket:update');
+			this.events.emit('basket:open');
 		});
 	}
 

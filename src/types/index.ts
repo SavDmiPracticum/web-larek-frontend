@@ -55,28 +55,3 @@ export interface IWebStoreApi {
 	getItem(id: string): Promise<IItem>;
 	makeOrder(order: IOrder): Promise<IOrderSuccess>;
 }
-
-export enum AppEvents {
-	ITEMS_LOADED = 'items:loaded',
-
-	ITEM_SELECT = 'item:select',
-	ITEM_ADD = 'item:add',
-	ITEM_REMOVE = 'item:remove',
-
-	BASKET_OPEN = 'basket:open',
-	BASKET_UPDATE = 'basket:update',
-
-	FORM_ERRORS_CHANGE = 'formErrors:change',
-
-	ORDER_START = 'order:start',
-	CONTACTS_READY = 'contacts:ready',
-	CONTACTS_SUBMIT = 'contacts:submit',
-	ORDER_SUBMIT = 'order:submit',
-	ORDER_READY = 'order:ready',
-	ORDER_ERROR = 'order:error',
-
-	SUCCESS_CLOSE = 'success:close',
-
-	MODAL_OPEN = 'modal:open',
-	MODAL_CLOSE = 'modal:close',
-}

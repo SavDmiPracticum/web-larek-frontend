@@ -1,5 +1,4 @@
 import {
-	IApiError,
 	IItem,
 	IItemList,
 	IOrder,
@@ -9,10 +8,8 @@ import {
 import { Api } from '../base/api';
 
 export class WebStoreApi extends Api implements IWebStoreApi {
-	
-	constructor(baseUrl: string, options: RequestInit = {}) {
+	constructor(baseUrl: string, protected cdnUrl: string, options: RequestInit = {}) {
 		super(baseUrl, options);
-		
 	}
 
 	getItemList(): Promise<IItemList> {
@@ -20,20 +17,18 @@ export class WebStoreApi extends Api implements IWebStoreApi {
 			...data,
 			items: data.items.map((item: IItem) => ({
 				...item,
-				image: item.image,
+				image: this.cdnUrl + item.image,
 			})),
 		}));
 	}
 
 	getItem(id: string): Promise<IItem> {
-		return this.get( `/product/${id}`).then((item: IItem) => ({
+		return this.get(`/product/${id}`).then((item: IItem) => ({
 			...item,
-			image: this.baseUrl + item.image,
+			image: this.cdnUrl + item.image,
 		}));
 	}
 	makeOrder(order: IOrder): Promise<IOrderSuccess> {
-		return this.post( '/order', order).then(
-			(data: IOrderSuccess) => data
-		);
+		return this.post('/order', order).then((data: IOrderSuccess) => data);
 	}
 }

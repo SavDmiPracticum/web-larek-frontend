@@ -7,14 +7,8 @@ import {
 	ItemPreviewView,
 } from './components/view/ItemView';
 import './scss/styles.scss';
-import {
-	AppEvents,
-	IItem,
-	IItemList,
-	IOrderForm,
-	IOrderSuccess,
-} from './types';
-import { settings, API_URL } from './utils/constants';
+import { IItem, IItemList, IOrderForm, IOrderSuccess } from './types';
+import { API_URL, CDN_URL } from './utils/constants';
 import { cloneTemplate, ensureElement } from './utils/utils';
 import { BasketModel } from './components/model/BasketModel';
 import { MainPageModel } from './components/model/MainPageModel';
@@ -35,7 +29,7 @@ const orderTemplate = ensureElement<HTMLTemplateElement>('#order');
 const contactTemplate = ensureElement<HTMLTemplateElement>('#contacts');
 const successTemplate = ensureElement<HTMLTemplateElement>('#success');
 
-const api = new WebStoreApi(API_URL);
+const api = new WebStoreApi(API_URL, CDN_URL);
 const events = new EventEmitter();
 
 const mainPage = new MainPageModel(new BasketModel(), events);
@@ -58,7 +52,7 @@ api
 	.then((items: IItemList) => mainPage.setCatalog(items.items))
 	.catch((error) => console.error(error));
 
-events.on(AppEvents.ITEMS_LOADED, () => {
+events.on('items:loaded', () => {
 	const itemGallery = mainPage.catalog.map((item) =>
 		new ItemCatalogView(cloneTemplate(cardTemplate), events).render(item)
 	);
@@ -69,7 +63,7 @@ events.on(AppEvents.ITEMS_LOADED, () => {
 	});
 });
 
-events.on(AppEvents.ITEM_SELECT, (data: { id: string }) => {
+events.on('item:select', (data: { id: string }) => {
 	const item = mainPage.getItemFromCatalog(data.id);
 	if (item) {
 		const cardPreview = new ItemPreviewView(
@@ -83,12 +77,12 @@ events.on(AppEvents.ITEM_SELECT, (data: { id: string }) => {
 	}
 });
 
-events.on(AppEvents.ITEM_ADD, (data: { id: string }) => {
+events.on('item:add', (data: { id: string }) => {
 	const item = mainPage.getItemFromCatalog(data.id);
 	mainPage.basket.add(item);
 });
 
-events.on(AppEvents.BASKET_UPDATE, () => {
+events.on('basket:update', () => {
 	const basket = mainPage.basket.getItems();
 	basketView.basketList = basket.items.map((item: IItem, ind: number) => {
 		const cardBasket = new ItemBasketView(
@@ -105,15 +99,15 @@ events.on(AppEvents.BASKET_UPDATE, () => {
 	mainPageView.render({ counter: mainPage.basket.getItemsCount() });
 });
 
-events.on(AppEvents.ITEM_REMOVE, (data: { id: string }) => {
+events.on('item:remove', (data: { id: string }) => {
 	mainPage.basket.remove(data.id);
 });
 
-events.on(AppEvents.BASKET_OPEN, () => {
+events.on('basket:open', () => {
 	modalView.render({ contentView: basketView.render() });
 });
 
-events.on(AppEvents.ORDER_START, () => {
+events.on('order:start', () => {
 	modalView.render({
 		contentView: orderViewAddress.render({ valid: false, errors: [] }),
 	});
@@ -147,7 +141,7 @@ events.on(
 	}
 );
 
-events.on(AppEvents.FORM_ERRORS_CHANGE, (errors: Partial<IOrderForm>) => {
+events.on('formErrors:change', (errors: Partial<IOrderForm>) => {
 	const { email, phone, address } = errors;
 	orderViewAddress.valid = !address;
 	orderViewAddress.errors = Object.values({ address })
@@ -160,21 +154,21 @@ events.on(AppEvents.FORM_ERRORS_CHANGE, (errors: Partial<IOrderForm>) => {
 		.join('; ');
 });
 
-events.on(AppEvents.ORDER_READY, () => {
+events.on('order:ready', () => {
 	orderViewAddress.valid = true;
 });
 
-events.on(AppEvents.ORDER_SUBMIT, () => {
+events.on('order:submit', () => {
 	modalView.render({
 		contentView: orderViewContacts.render({ valid: false, errors: [] }),
 	});
 });
 
-events.on(AppEvents.CONTACTS_READY, () => {
+events.on('contacts:ready', () => {
 	orderViewContacts.valid = true;
 });
 
-events.on(AppEvents.CONTACTS_SUBMIT, () => {
+events.on('contacts:submit', () => {
 	mainPage.setOrderPrice(mainPage.basket.totalPrice);
 	mainPage.setOrderItems(mainPage.basket.getItemsBasket());
 	api.makeOrder(mainPage.order).then((data: IOrderSuccess) => {
@@ -182,20 +176,20 @@ events.on(AppEvents.CONTACTS_SUBMIT, () => {
 		modalView.render({
 			contentView: successView.render(),
 		});
+		orderViewAddress.reset();
+		orderViewContacts.reset();
+		mainPage.resetAll();
 	});
 });
 
-events.on(AppEvents.SUCCESS_CLOSE, () => {
+events.on('success:close', () => {
 	modalView.close();
-	orderViewAddress.reset();
-	orderViewContacts.reset();
-	mainPage.resetAll();
 });
 
-events.on(AppEvents.MODAL_OPEN, () => {
+events.on('modal:open', () => {
 	mainPageView.render({ lock: true });
 });
 
-events.on(AppEvents.MODAL_CLOSE, () => {
+events.on('modal:close', () => {
 	mainPageView.render({ lock: false });
 });

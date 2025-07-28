@@ -1,4 +1,4 @@
-import { AppEvents, IOrderSuccess } from '../../types/index';
+import { IOrderSuccess } from '../../types/index';
 import { IEvents } from '../base/events';
 import { ensureElement } from '../../utils/utils';
 import { View } from '../base/View';
@@ -17,8 +17,7 @@ export class SuccessView extends View<IOrderSuccess> {
 			this.container
 		);
 		this._button_close.addEventListener('click', () => {
-			this.events.emit(AppEvents.SUCCESS_CLOSE);
-			this.events.emit(AppEvents.ITEMS_LOADED);
+			this.events.emit('success:close');
 		});
 	}
 

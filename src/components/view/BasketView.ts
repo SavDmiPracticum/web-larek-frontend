@@ -1,4 +1,4 @@
-import { AppEvents, IBasket } from '../../types';
+import { IBasket } from '../../types';
 import { createElement, ensureElement } from '../../utils/utils';
 import { IEvents } from '../base/events';
 import { View } from '../base/View';
@@ -23,7 +23,7 @@ export class BasketView extends View<IBasket> {
 		);
 
 		this._buyButton.addEventListener('click', () => {
-			this.events.emit(AppEvents.ORDER_START);
+			this.events.emit('order:start');
 		});
 		this.setDisabled(this._buyButton, true);
 	}

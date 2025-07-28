@@ -1,5 +1,4 @@
-import { CDN_URL } from './../../utils/constants';
-import { AppEvents, IItem } from '../../types';
+import { IItem } from '../../types';
 import { ensureElement } from '../../utils/utils';
 import { View } from '../base/View';
 import { IEvents } from '../base/events';
@@ -52,12 +51,12 @@ export class ItemCatalogView extends ItemView {
 		);
 
 		this.container.addEventListener('click', () =>
-			this.events.emit(AppEvents.ITEM_SELECT, { id: this._id })
+			this.events.emit('item:select', { id: this._id })
 		);
 	}
 
 	set image(value: string) {
-		this.setImage(this._image, CDN_URL + value, this._title.textContent);
+		this.setImage(this._image, value, this._title.textContent);
 	}
 
 	set category(value: string) {
@@ -78,11 +77,11 @@ export class ItemPreviewView extends ItemCatalogView {
 		);
 		this._buyButton.addEventListener('click', () => {
 			if (this._buyButton.textContent === 'Купить') {
-				events.emit(AppEvents.ITEM_ADD, { id: this._id });
-				events.emit(AppEvents.BASKET_UPDATE);
+				events.emit('item:add', { id: this._id });
+				events.emit('basket:update');
 			} else {
-				this.events.emit(AppEvents.ITEM_REMOVE, { id: this._id });
-				this.events.emit(AppEvents.BASKET_UPDATE);
+				this.events.emit('item:remove', { id: this._id });
+				this.events.emit('basket:update');
 			}
 		});
 	}
@@ -113,8 +112,8 @@ export class ItemBasketView extends ItemView {
 		this._deleteButton.addEventListener('click', (evt: MouseEvent) => {
 			evt.stopPropagation();
 			evt.preventDefault();
-			this.events.emit(AppEvents.ITEM_REMOVE, { id: this._id });
-			this.events.emit(AppEvents.BASKET_UPDATE);
+			this.events.emit('item:remove', { id: this._id });
+			this.events.emit('basket:update');
 		});
 	}
 

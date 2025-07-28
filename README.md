@@ -64,11 +64,11 @@ yarn build
 - IItem - описывает свойства товара
 - IItemList - список товаров
 - IBasket - описывает свойства корзины
+- IOrderForm - описывает формы заказа
 - IOrder - описывает свойства заказа
 - IOrderSuccess - успешный ответ от API
-- IApiError - описывает ошибку API 
+- FormErrors - описывает ошибки формы
 - IWebStoreApi - описывает методы работы с API
-- AppEvents - перечисление событий приложения
 
 #### Классы (компоненты)
 #### Базовый код
@@ -76,48 +76,40 @@ yarn build
 - Api. Базовый класс, реализующий методы взаимодействия с сервером. Родительский класс для WebStoreApi.
 
 ##### Модель (Model)
-- ItemModel. Класс описывает товар (хранит данные товаре, предоставляет доступ к его свойствам, возвращает данные о товаре).
+- MainPageModel. Класс описывает страницу, хранит информацию о каталоге товаров, заказе. Основная бизнес-логика приложения.
     - Поля:
-        - id: string; (идентификатор товара)
-	    - description: string; (описание товара)
-	    - image: string; (ссылка на фото товара)
-	    - title: string; (наименование товара)
-	    - category: Category; (категория товара)
-	    - price: number | null; (цена товара)
+        - _catalog: массив товаров
+	    - _basket: ссылка на корзину
+	    - _order: данные заказа
+		- _formErrors: ошибки форма
     - Методы:
-        - getItem(id: string): IItem; (возвращает информацию о товаре)
+        - setCatalog(catalog: IItem[]): void; (заполняет каталог товаров)
+        - getItemFromCatalog(id: string): IItem | undefined (получить товар из каталога)
+        - setOrderField(field: keyof IOrderForm, value: string) (заполняет поля заказа)
+        - setContactsField(field: keyof IOrderForm, value: string) (заполняет поля заказа)
+        - validateOrder(): boolean (валидация заказа)
+        - validateContacts(): boolean (валидация заказа)
+        - setOrderPrice(price: number): void (сохранить цену товара в заказе)
+        - setOrderItems(items: string[]): void (сохранить товары в заказе)
+        - resetAll(): void (сброс корзины, заказа)
 
 - BasketModel. Класс хранит информацию о корзине, добавляет/удаляет товар, считает итоговую сумму.
     - Поля:
         - items: IItems[]; (массив товаров)
-        - total: number; (итоговая стоимость всех товаров в корзине)
+        - totalPrice: number; (итоговая стоимость всех товаров в корзине)
     - Методы:
         - add(item: IItem): void; (добавляет товар в корзину)
         - remove(id: string): void; (удаляет товар из корзины)
+        - add(item: IItem): void; (возвращает товары из корзины)
         - clear(): void; (очищает корзину)
-        - getBasket(): IBasket; (возвращает корзину с товарами)
+        - getBasket(): IBasket; (возвращает корзину с товарами - объект)
         - getItemsBasket(): string[];  (возвращает идентификаторы товаров в корзине для заказа)
-
-- OrderModel. Класс хранит информацию о заказе, делает проверку заказа, подсчитывает итоговую сумму заказа, отправляет данные на сервер.
-    - Поля:
-        - payment: PayMethod; (метод оплаты заказа)
-	    - email: string; (электронная почта)
-	    - phone: string; (телефон)
-	    - address: string; (адрес)
-	    - totalPrice: number | null; (стоимость заказа)
-	    - items: string[]; (идентификаторы товаров в заказе)
-        - step: number; (шаг заказа)
-    - Методы:
-        - setPayMethod(method: PayMethod): void; (установить метод оплаты заказа)
-        - setEmail(email: string); void; (установить почту)
-        - setAddress(address: string): void; (установить адрес)
-        - setTotalPrice(price: number | null): void (установить цену)
-        - submit(): Promise< IOrderSuccess >; (отправляет заказ)
-        - clear(): void; (очистить заказ)
+        - getItemsCount(): number; (возвращает количество товаров в корзине)
 
 - WebStoreApi. Класс для работы с API сервера, отправляет заказ, получает каталог товаров или товар по идентификатору. Наследуется от класса Api.
     - Поля:
         - baseUrl: string; (общий URL запросов)
+        - cdnUrl: string; (URL для картинок)
     - Методы:
         - getItemList(): Promise< IItemList >; (отправляет запрос на сервер для получение каталога товаров)
 	    - getItem(id: string): Promise< IItem >; (отправляет запрос на сервер для получения товара по идентификатору)
@@ -136,15 +128,16 @@ yarn build
 
 - MainPageView. Класс для отрисовки главной страницы приложения (каталога товаров, счетчика в корзине и кнопки открытия корзины).
     - Поля:
-        - container: HTMLElement; (корневой контейнер страницы)
-        - catalog: HTMLElement; (контейнер каталога)
-        - basket: HTMLElement; (элемент корзины)
-        - counter: HTMLElement; (элемент счетчика корзины)
+        - _pageLock: HTMLElement;; (корневой контейнер страницы)
+        - _catalog: HTMLElement; (контейнер каталога)
+        - _basket: HTMLElement; (элемент корзины)
+        - _counter: HTMLElement; (элемент счетчика корзины)
     - Методы:
-        - setCatalog(items: HTMLElement[]); void; (получает элементы карточек товара)
-        - setCounter(value; number): void; (обновляет счетчик корзины)
+        - set catalog(items: HTMLElement[]); void; (получает элементы карточек товара)
+        - set counter(value; number): void; (обновляет счетчик корзины)
+        - set lock(value: boolean): void; (блокирует главную страницу)
 
-- ItemView. Класс для отображения карточки товара в разных видах (галерея, превью, корзина).
+- ItemView. Базовый класс для отображения карточки товара в разных видах (галерея, превью, корзина).
     - Поля:
         - container: HTMLElement; (контейнер карточки товара)
         - id: string; (идентификатор товара)
@@ -231,7 +224,7 @@ yarn build
 - 'basket:open' - открытие корзины,
 - 'basket:update' - обновление корзины,
 - 'basket:close' - закрытие корзины,
-- 'order:step' - переключение шага оформления заказа,
+- 'contact:submit' - переключение шага оформления заказа,
 - 'order:submit' - завершить заказ,
 - 'order:success' - заказ оформлен успешно,
 - 'order:error' - ошибка при оформление заказа,

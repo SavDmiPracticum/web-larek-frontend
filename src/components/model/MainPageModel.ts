@@ -1,11 +1,4 @@
-import {
-	AppEvents,
-	FormErrors,
-	IBasket,
-	IItem,
-	IOrder,
-	IOrderForm,
-} from '../../types';
+import { FormErrors, IBasket, IItem, IOrder, IOrderForm } from '../../types';
 import { IEvents } from '../base/events';
 import { BasketModel } from './BasketModel';
 
@@ -20,7 +13,7 @@ export class MainPageModel {
 		phone: '',
 		items: [],
 	};
-	formErrors: FormErrors = {};
+	protected _formErrors: FormErrors = {};
 
 	constructor(basket: BasketModel, protected events: IEvents) {
 		this._basket = basket;
@@ -28,7 +21,7 @@ export class MainPageModel {
 
 	setCatalog(catalog: IItem[]) {
 		this._catalog = catalog;
-		this.events.emit(AppEvents.ITEMS_LOADED);
+		this.events.emit('items:loaded');
 	}
 
 	get catalog(): IItem[] {
@@ -47,35 +40,35 @@ export class MainPageModel {
 		return this._basket;
 	}
 
-	setOrderField(field: keyof IOrderForm, value: string) {
+	setOrderField(field: keyof IOrderForm, value: string): void {
 		this._order[field] = value;
-		
+
 		if (this.validateOrder()) {
-			this.events.emit(AppEvents.ORDER_READY);
+			this.events.emit('order:ready');
 		}
 	}
-	setContactsField(field: keyof IOrderForm, value: string) {
+	setContactsField(field: keyof IOrderForm, value: string): void {
 		this._order[field] = value;
 
 		if (this.validateContacts()) {
-			this.events.emit(AppEvents.CONTACTS_READY);
+			this.events.emit('contacts:ready');
 		}
 	}
 
 	validateOrder(): boolean {
-		const errors: typeof this.formErrors = {};
+		const errors: typeof this._formErrors = {};
 
 		if (!this._order.address) {
 			errors.address = 'Необходимо указать адрес';
 		}
 
-		this.formErrors = errors;
-		this.events.emit('formErrors:change', this.formErrors);
+		this._formErrors = errors;
+		this.events.emit('formErrors:change', this._formErrors);
 		return Object.keys(errors).length === 0;
 	}
 
 	validateContacts(): boolean {
-		const errors: typeof this.formErrors = {};
+		const errors: typeof this._formErrors = {};
 		if (!this._order.email) {
 			errors.email = 'Необходимо указать email';
 		}
@@ -83,8 +76,8 @@ export class MainPageModel {
 			errors.phone = 'Необходимо указать телефон';
 		}
 
-		this.formErrors = errors;
-		this.events.emit('formErrors:change', this.formErrors);
+		this._formErrors = errors;
+		this.events.emit('formErrors:change', this._formErrors);
 		return Object.keys(errors).length === 0;
 	}
 
@@ -96,7 +89,7 @@ export class MainPageModel {
 		this._order.items = items;
 	}
 
-	resetAll() {
+	resetAll(): void {
 		this._order = {
 			address: '',
 			payment: 'online',
@@ -107,5 +100,6 @@ export class MainPageModel {
 		};
 
 		this.basket.clear();
+		this.events.emit('items:loaded');
 	}
 }

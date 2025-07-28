@@ -1,4 +1,3 @@
-import { AppEvents } from '../../types';
 import { ensureElement } from '../../utils/utils';
 import { IEvents } from '../base/events';
 import { View } from '../base/View';
@@ -32,12 +31,12 @@ export class ModalView extends View<IModalView> {
 	close() {
 		this.container.classList.remove('modal_active');
 		this._contentView.replaceChildren();
-		this.events.emit(AppEvents.MODAL_CLOSE);
+		this.events.emit('modal:close');
 	}
 
 	open() {
 		this.container.classList.add('modal_active');
-		this.events.emit(AppEvents.MODAL_OPEN);
+		this.events.emit('modal:open');
 	}
 
 	render(data?: Partial<IModalView>): HTMLElement {
