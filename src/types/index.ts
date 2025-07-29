@@ -12,9 +12,9 @@ export interface IItem {
 	image: string;
 	title: string;
 	category: Category;
+	inBasket?: boolean;
 	price: number | null;
 	index?: number;
-	inBasket?: boolean;
 }
 
 export interface IItemList {

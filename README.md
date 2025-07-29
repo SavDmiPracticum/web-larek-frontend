@@ -6,6 +6,8 @@
 - src/ — исходные файлы проекта
 - src/components/ — папка с JS компонентами
 - src/components/base/ — папка с базовым кодом
+- src/components/model/ — папка с моделями
+- src/components/view/ — папка с отображениями
 
 Важные файлы:
 - src/pages/index.html — HTML-файл главной страницы
@@ -139,78 +141,89 @@ yarn build
 
 - ItemView. Базовый класс для отображения карточки товара в разных видах (галерея, превью, корзина).
     - Поля:
-        - container: HTMLElement; (контейнер карточки товара)
-        - id: string; (идентификатор товара)
-	    - description: HTMLElement; (элемент описание товара)
-	    - image: HTMLElement; (элемент ссылка на фото товара)
-	    - title: HTMLElement; (элемент наименование товара)
-	    - category: HTMLElement; (элемент категории товара)
-	    - price: HTMLElement; (элемент цена товара)
-        - button: HTMLButtonElement (элемент кнопки добавить/удалить)
+        - _title: HTMLElement; (элемент названия)
+	    - _price: HTMLElement; (элемент цены)
+	    - _id: string; (ID товара)
     - Методы:
-        - setId(value: string): void; (устанавливает идентификатор)
-        - setTitle(value: string): void; (устанавливает название)
-        - setImage(value: string): void; (устанавливает изображение)
-        - setDescription(value: string): void; (устанавливает описание)
-        - setCategory(value: Category): void; (устанавливает категорию)
-        - setPrice(value: number | null): void; (устанавливает цену)
-        - setButtonText(value: string): void; (устанавливает текст кнопки)
+        - set title(value: string); (установить название)
+        - set price(value: number | null); (установить цену)
+        - set id(value: string);  (установить ID)
+
+- ItemCatalogView. Класс отображения товара в каталоге (галерея)
+    - Поля:
+        - _image: HTMLImageElement;  (элемент рисунок)
+	    - _category: HTMLElement; (элемент категория)
+	    - _categoryColor = <Record<string, string>> (словарь категорий и правил)
+    - Методы:
+        - set image(value: string); (установить рисунок и текст)
+        - set category(value: string); (установить категорию)
+
+- ItemPreviewView. Класс отображения товара в модальном окне (превью)
+    - Поля:
+        - _text: HTMLElement; (элемент описания)
+	    - _buyButton: HTMLButtonElement; (элемент кнопки купить)
+    - Методы:
+        - set description(value: string); (устанавливает описание)
+        - set inBasket(value: boolean); (меняет название кнопки)
+
+- ItemBasketView. Класс отображения товара в корзине.
+    - Поля:
+        - _index: HTMLElement; (элемент нумерации)
+	    - _deleteButton: HTMLButtonElement; (кнопка удалить товар из корзины)
+    - Методы:
+        - set index(value: number); (установить номер товара в корзине)
 
 - ModalView. Базовый класс для отображения HTML-элементов в модальном окне.
     - Поля: 
-        - container: HTMLElement; (контейнер окна)
-        - content: HTMLElement; (контейнер содержимого)
-        - button: HTMLButtonElement; (кнопка закрытия окна)
+        - _contentView: HTMLElement; (контейнер содержимого)
+        - _closeButton: HTMLButtonElement; (кнопка закрытия окна)
     - Методы:
-        - openModal(): void; (открытие модального окна)
-        - closeModal(): void; (закрытие модального окна)
-        - setContent(element: HTMLElement): void; (устанавливает содержимое модального окна)
+        - open(): void; (открытие модального окна)
+        - close(): void; (закрытие модального окна)
+        - render(data?: Partial< IModalView >): HTMLElement; (устанавливает содержимое модального окна)
 
 - BasketView. Класс для отрисовки корзины. Показывает список товаров и итоговую сумму.
     - Поля:
-        - container: HTMLElement; (контейнер корзины)
-        - items: HTMLElement; (контейнер товаров в корзине)
-	    - totalPrice: HTMLElement; (контейнер итоговой цены)
-        - button: HTMLButtonElement; (кнопка оформления заказа)
+        - _basketList: HTMLElement; (контейнер товаров в корзине)
+	    - _totalPrice: HTMLElement; (контейнер итоговой цены)
+        - _buyButton: HTMLButtonElement; (кнопка оформления заказа)
     - Методы:
-        - setItems(elements: HTMLElement[]): void; (устанавливает список товаров в корзине)
+        - set basketList(value: HTMLElement[]); (устанавливает список товаров в корзине)
         - setTotalPrice(totalPrice: number): void; (отображает сумму товаров)
-        - setButtonActive(active: boolean): void; (активирует/деактивирует кнопку)
-
+        
 - FormView. Базовый класс для отображения форм ввода. Реализует общую функциональность форм.
     - Поля:
-       - container: HTMLFormElement; (контейнер формы)
-       - button: HTMLButtonElement; (кнопка отправки формы - submit)
-       - error: HTMLElement; (контейнер отображения ошибок валидации)
+       - _submit: HTMLButtonElement; (кнопка отправки формы - submit)
+       - _errors: HTMLElement; (контейнер отображения ошибок валидации)
     - Методы:
-        - setButtonActive(active: boolean): void; (управляет активацией/деактивацией кнопки отправки формы)
-        - setError(error: string): void; (отображает ошибки валидации)
+        - onInputChange(field: keyof T, value: string); (обрабатывает события ввода в инпуты)
+        - set valid(value: boolean); (активирует кнопку)
+        - reset(): void; (сброс инпутов)
         - render(data?: Partial< T >): HTMLElement (отрисовать форму)
 
-- OrderFormView. Родительский класс - FormView. Отрисовывает первую форма ввода при формировании заказа (выбор способа оплаты и ввод адреса).
+- OrderViewAddress. Родительский класс - FormView. Отрисовывает первую форма ввода при формировании заказа (выбор способа оплаты и ввод адреса).
     - Поля:
-        - paymentOnline: HTMLButtonElement; (элемент кнопки оплаты онлайн)
-        - paymentOffline: HTMLButtonElement; (элемент кнопки оплаты оффлайн)
-	    - address: HTMLInputElement; (элемент поля адрес)
+        - _cashButton: HTMLButtonElement; (элемент кнопки формы оплаты)
+	    - _cardButton: HTMLButtonElement; (элемент кнопки формы оплаты)
+	    - _address: HTMLInputElement; (инпут для адреса)
 	- Методы:
-        - setPayment(method: PayMethod): void (устанавливает способ оплаты)
-        - setAddress(address: string): void (отображает адрес)
-        - validate(): boolean; (проверяет валидность полей форм)
-
-- ContactFormView.  Родительский класс - FormView. Отображает вторую форму ввода при формировании заказа (ввод почты и телефона).
+        - set payment(value: PayMethod): void (устанавливает способ оплаты)
+        - reset(): void (сброс формы)
+        
+- OrderViewContacts.  Родительский класс - FormView. Отображает вторую форму ввода при формировании заказа (ввод почты и телефона).
     - Поля:
-        - email: HTMLInputElement; (элемент поля электронная почта)
-	    - phone: HTMLInputElement; (элемент поля телефон)
+        - _email: HTMLInputElement; (элемент поля электронная почта)
+	    - _phone: HTMLInputElement; (элемент поля телефон)
 	 - Методы:
         - setEmail(email: string): void; (устанавливает почту)
         - setPhone(phone: string): void; (отображает телефон)
-        - validate(): boolean; (проверяет валидность полей форм)  
-
-- SuccessFormView. Родительский класс - FormView. Показывает форму успешной отправка заказа.
+       
+- SuccessView. Родительский класс - FormView. Показывает форму успешной отправка заказа.
     - Поля:
-        - totalPrice: HTMLElement;
+        - _description: HTMLElement; (элемент описания)
+	    - _button_close: HTMLButtonElement; (кнопка закрытия)
     - Методы:
-        - setTotalPrice(price: number): void; (отображает итоговую сумму)
+        - setTotal(price: number): void; (отображает итоговую сумму)
     
 
 #### Презентер (Presenter)
@@ -225,9 +238,12 @@ yarn build
 - 'basket:update' - обновление корзины,
 - 'basket:close' - закрытие корзины,
 - 'contact:submit' - переключение шага оформления заказа,
-- 'order:submit' - завершить заказ,
-- 'order:success' - заказ оформлен успешно,
-- 'order:error' - ошибка при оформление заказа,
+- 'order:start' - начинаем оформление заказа,
+- 'order. * :change', 'contacts. * :change' - валидация заказа
+- 'order:submit' - завершить ввод адреса,
+- 'contacts:submit' - завершить ввод контактов,
+- 'success:close' - заказ оформлен успешно,
+- 'formErrors:change' - ошибка при оформление заказа,
 - 'modal:open' - открытие модального окна,
 - 'modal:close' - закрытие модального окна.
 

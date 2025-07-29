@@ -75,6 +75,10 @@ export class ItemPreviewView extends ItemCatalogView {
 			'.card__button',
 			this.container
 		);
+
+		this._buyButton.disabled = true;
+		this._buyButton.textContent = 'Недоступно';
+
 		this._buyButton.addEventListener('click', () => {
 			if (this._buyButton.textContent === 'Купить') {
 				events.emit('item:add', { id: this._id });
@@ -91,6 +95,7 @@ export class ItemPreviewView extends ItemCatalogView {
 	}
 
 	set inBasket(value: boolean) {
+		this._buyButton.disabled = false;
 		this._buyButton.textContent = value ? 'Удалить из корзины' : 'Купить';
 	}
 }

@@ -47,11 +47,6 @@ const orderViewContacts = new OrderViewContacts(
 );
 const successView = new SuccessView(cloneTemplate(successTemplate), events);
 
-api
-	.getItemList()
-	.then((items: IItemList) => mainPage.setCatalog(items.items))
-	.catch((error) => console.error(error));
-
 events.on('items:loaded', () => {
 	const itemGallery = mainPage.catalog.map((item) =>
 		new ItemCatalogView(cloneTemplate(cardTemplate), events).render(item)
@@ -70,9 +65,11 @@ events.on('item:select', (data: { id: string }) => {
 			cloneTemplate(cardPreviewTemplate),
 			events
 		);
-		mainPage.basket.getItemsBasket().includes(data.id)
-			? (item.inBasket = true)
-			: (item.inBasket = false);
+		if (item.price !== null) {
+			mainPage.basket.getItemsBasket().includes(data.id)
+				? (item.inBasket = true)
+				: (item.inBasket = false);
+		}
 		modalView.render({ contentView: cardPreview.render(item) });
 	}
 });
@@ -83,7 +80,7 @@ events.on('item:add', (data: { id: string }) => {
 });
 
 events.on('basket:update', () => {
-	const basket = mainPage.basket.getItems();
+	const basket = mainPage.basket.getBasket();
 	basketView.basketList = basket.items.map((item: IItem, ind: number) => {
 		const cardBasket = new ItemBasketView(
 			cloneTemplate(cardBasketTemplate),
@@ -193,3 +190,8 @@ events.on('modal:open', () => {
 events.on('modal:close', () => {
 	mainPageView.render({ lock: false });
 });
+
+api
+	.getItemList()
+	.then((items: IItemList) => mainPage.setCatalog(items.items))
+	.catch((error) => console.error(error));

@@ -1,4 +1,4 @@
-import { FormErrors, IBasket, IItem, IOrder, IOrderForm } from '../../types';
+import { FormErrors, IItem, IOrder, IOrderForm } from '../../types';
 import { IEvents } from '../base/events';
 import { BasketModel } from './BasketModel';
 
@@ -7,7 +7,7 @@ export class MainPageModel {
 	protected _basket: BasketModel;
 	protected _order: IOrder = {
 		address: '',
-		payment: 'online',
+		payment: '',
 		email: '',
 		total: 0,
 		phone: '',
@@ -58,6 +58,10 @@ export class MainPageModel {
 	validateOrder(): boolean {
 		const errors: typeof this._formErrors = {};
 
+		if (!this._order.payment) {
+			errors.address = 'Необходимо указать способ оплаты';
+		}
+
 		if (!this._order.address) {
 			errors.address = 'Необходимо указать адрес';
 		}
@@ -92,7 +96,7 @@ export class MainPageModel {
 	resetAll(): void {
 		this._order = {
 			address: '',
-			payment: 'online',
+			payment: '',
 			email: '',
 			total: 0,
 			phone: '',

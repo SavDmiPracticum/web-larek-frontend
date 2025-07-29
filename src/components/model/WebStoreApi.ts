@@ -8,8 +8,13 @@ import {
 import { Api } from '../base/api';
 
 export class WebStoreApi extends Api implements IWebStoreApi {
-	constructor(baseUrl: string, protected cdnUrl: string, options: RequestInit = {}) {
+	constructor(
+		baseUrl: string,
+		protected cdnUrl: string,
+		options: RequestInit = {}
+	) {
 		super(baseUrl, options);
+		this.cdnUrl = cdnUrl;
 	}
 
 	getItemList(): Promise<IItemList> {

@@ -25,13 +25,18 @@ export class OrderViewAddress extends FormView<IOrder> {
 
 		this._cashButton.addEventListener('click', () => {
 			this.payment = 'online';
-			this.events.emit('order:cash');
+			this.events.emit('order.payment:change', {
+				field: 'payment',
+				value: 'online',
+			});
 		});
 		this._cardButton.addEventListener('click', () => {
 			this.payment = 'offline';
-			this.events.emit('order:card');
+			this.events.emit('order.payment:change', {
+				field: 'payment',
+				value: 'offline',
+			});
 		});
-		this.payment = 'online';
 	}
 
 	set payment(value: PayMethod) {
@@ -46,7 +51,8 @@ export class OrderViewAddress extends FormView<IOrder> {
 
 	reset() {
 		super.reset();
-		this.payment = 'online';
+		this._cardButton.classList.remove('button_alt-active');
+		this._cashButton.classList.remove('button_alt-active');
 	}
 }
 

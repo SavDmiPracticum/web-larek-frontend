@@ -21,7 +21,9 @@ export class ModalView extends View<IModalView> {
 		);
 		this._closeButton.addEventListener('click', this.close.bind(this));
 		this.container.addEventListener('click', this.close.bind(this));
-		this._contentView.addEventListener('click', (event: Event) => event.stopPropagation());
+		this._contentView.addEventListener('click', (event: Event) =>
+			event.stopPropagation()
+		);
 	}
 
 	set contentView(value: HTMLElement) {

@@ -32,7 +32,7 @@ export class BasketModel implements IBasket {
 		this._items = this._items.filter((item: IItem) => item.id !== id);
 	}
 
-	getItems(): IBasket {
+	getBasket(): IBasket {
 		return { items: this._items, totalPrice: this._totalPrice };
 	}
 
