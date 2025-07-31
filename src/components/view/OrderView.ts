@@ -41,18 +41,18 @@ export class OrderViewAddress extends FormView<IOrder> {
 
 	set payment(value: PayMethod) {
 		if (value === 'online') {
-			this._cashButton.classList.add('button_alt-active');
-			this._cardButton.classList.remove('button_alt-active');
+			this.toggleClass(this._cashButton, 'button_alt-active', true);
+			this.toggleClass(this._cardButton, 'button_alt-active', false);
 		} else {
-			this._cashButton.classList.remove('button_alt-active');
-			this._cardButton.classList.add('button_alt-active');
+			this.toggleClass(this._cashButton, 'button_alt-active', false);
+			this.toggleClass(this._cardButton, 'button_alt-active', true);
 		}
 	}
 
 	reset() {
 		super.reset();
-		this._cardButton.classList.remove('button_alt-active');
-		this._cashButton.classList.remove('button_alt-active');
+		this.toggleClass(this._cashButton, 'button_alt-active', false);
+		this.toggleClass(this._cardButton, 'button_alt-active', false);
 	}
 }
 

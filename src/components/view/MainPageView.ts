@@ -31,7 +31,7 @@ export class MainPageView extends View<IMainPage> {
 	}
 
 	set counter(value: number) {
-		this._counter.textContent = value.toString();
+		this.setText(this._counter, value);
 	}
 
 	set lock(value: boolean) {

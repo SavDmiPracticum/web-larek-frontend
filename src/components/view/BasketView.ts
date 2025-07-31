@@ -25,7 +25,6 @@ export class BasketView extends View<IBasket> {
 		this._buyButton.addEventListener('click', () => {
 			this.events.emit('order:start');
 		});
-		this.setDisabled(this._buyButton, true);
 	}
 
 	set basketList(value: HTMLElement[]) {
@@ -43,6 +42,6 @@ export class BasketView extends View<IBasket> {
 	}
 
 	set totalPrice(value: number) {
-		this._totalPrice.textContent = `${value} синапсов`;
+		this.setText(this._totalPrice, `${value} синапсов`);
 	}
 }

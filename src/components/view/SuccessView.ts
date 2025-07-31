@@ -23,6 +23,6 @@ export class SuccessView extends View<IOrderSuccess> {
 
 	set total(value: number) {
 		if (value === 0) return;
-		this._description.textContent = `Списано ${value} синапсов.`;
+		this.setText(this._description, `Списано ${value} синапсов.`);
 	}
 }

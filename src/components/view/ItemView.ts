@@ -95,8 +95,8 @@ export class ItemPreviewView extends ItemCatalogView {
 	}
 
 	set inBasket(value: boolean) {
-		this._buyButton.disabled = false;
-		this._buyButton.textContent = value ? 'Удалить из корзины' : 'Купить';
+		this.setDisabled(this._buyButton, false);
+		this.setText(this._buyButton, value ? 'Удалить из корзины' : 'Купить');
 	}
 }
 
@@ -123,6 +123,6 @@ export class ItemBasketView extends ItemView {
 	}
 
 	set index(value: number) {
-		this.setText(this._index, value.toString());
+		this.setText(this._index, value);
 	}
 }

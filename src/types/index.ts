@@ -24,7 +24,7 @@ export interface IItemList {
 
 export interface IBasket {
 	items: IItem[];
-	totalPrice: number;
+	total: number;
 }
 
 export interface IOrderForm {

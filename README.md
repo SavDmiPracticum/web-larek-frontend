@@ -78,35 +78,24 @@ yarn build
 - Api. Базовый класс, реализующий методы взаимодействия с сервером. Родительский класс для WebStoreApi.
 
 ##### Модель (Model)
-- MainPageModel. Класс описывает страницу, хранит информацию о каталоге товаров, заказе. Основная бизнес-логика приложения.
+- AppModel. Класс описывает страницу, хранит информацию о каталоге товаров, заказе. Основная бизнес-логика приложения.
     - Поля:
         - _catalog: массив товаров
 	    - _basket: ссылка на корзину
-	    - _order: данные заказа
+	    - _orderInfo: данные заказа (способ платежа, контактные данные, адрес)
 		- _formErrors: ошибки форма
     - Методы:
         - setCatalog(catalog: IItem[]): void; (заполняет каталог товаров)
         - getItemFromCatalog(id: string): IItem | undefined (получить товар из каталога)
+        - get order(): IOrder (возвращает заказ для API)
         - setOrderField(field: keyof IOrderForm, value: string) (заполняет поля заказа)
         - setContactsField(field: keyof IOrderForm, value: string) (заполняет поля заказа)
         - validateOrder(): boolean (валидация заказа)
         - validateContacts(): boolean (валидация заказа)
-        - setOrderPrice(price: number): void (сохранить цену товара в заказе)
-        - setOrderItems(items: string[]): void (сохранить товары в заказе)
+        - getItemsBasket(): string[] (получить ID товаров из корзины)
+        - addToBasket(item: IItem): void (добавить товар в корзину)
+        - removeFromBasket(id: string): void (удалить товар из корзины)
         - resetAll(): void (сброс корзины, заказа)
-
-- BasketModel. Класс хранит информацию о корзине, добавляет/удаляет товар, считает итоговую сумму.
-    - Поля:
-        - items: IItems[]; (массив товаров)
-        - totalPrice: number; (итоговая стоимость всех товаров в корзине)
-    - Методы:
-        - add(item: IItem): void; (добавляет товар в корзину)
-        - remove(id: string): void; (удаляет товар из корзины)
-        - add(item: IItem): void; (возвращает товары из корзины)
-        - clear(): void; (очищает корзину)
-        - getBasket(): IBasket; (возвращает корзину с товарами - объект)
-        - getItemsBasket(): string[];  (возвращает идентификаторы товаров в корзине для заказа)
-        - getItemsCount(): number; (возвращает количество товаров в корзине)
 
 - WebStoreApi. Класс для работы с API сервера, отправляет заказ, получает каталог товаров или товар по идентификатору. Наследуется от класса Api.
     - Поля:
